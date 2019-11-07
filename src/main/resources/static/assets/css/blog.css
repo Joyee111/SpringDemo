@@ -1,0 +1,11 @@
+@charset "UTF-8";
+.post-thumb img {
+    width: 500px;
+    cursor: pointer;
+    transition: all 0.6s;
+}
+.post-thumb img:hover {
+    transform: scale(1.4);
+}
+
+ 

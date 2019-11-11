@@ -2,11 +2,11 @@
 	"use strict";
 /*--document ready functions--*/
     jQuery(document).ready(function($){
-		
+		$("#pdf-1").attr("href","/assets/img/blog-1.jpg");
 		
 	//typed activate
     $('.header-inner h6').typed({
-        strings: ["减肥  爱好者", "抽烟  喝酒  烫头", "JAVA开发 工程狮"],
+        strings: ["OPEN DOORS , DO NOT  STAY  OPEN  FOREVER!"],
         loop: true,
         startDelay: 1000,
         backDelay: 1000,

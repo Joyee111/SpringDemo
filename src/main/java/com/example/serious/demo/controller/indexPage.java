@@ -3,7 +3,8 @@ package com.example.serious.demo.controller;
 import com.example.serious.demo.service.demoService;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -19,8 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 public class indexPage {
     @Autowired
     com.example.serious.demo.service.demoService demoService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(indexPage.class);
+
     @RequestMapping("/index")
     public String index(HttpServletRequest request, HttpServletResponse response){
+
         demoService.iocTest();
         String uri = request.getRequestURI().toString();
         System.out.println(uri);

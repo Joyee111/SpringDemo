@@ -2,11 +2,13 @@
 	"use strict";
 /*--document ready functions--*/
     jQuery(document).ready(function($){
-		$("#pdf-1").attr("href","/assets/img/blog-1.jpg");
+		$("#pdf-1").unbind("click").bind("click" , function(){debugger;
+		    getBlog();
+		})//.attr("href","/assets/img/blog-1.jpg");
 		
 	//typed activate
     $('.header-inner h6').typed({
-        strings: ["OPEN DOORS , DO NOT  STAY  OPEN  FOREVER!"],
+        strings: ["", "", "JAVA"],
         loop: true,
         startDelay: 1000,
         backDelay: 1000,

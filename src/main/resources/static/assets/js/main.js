@@ -3,10 +3,11 @@
 /*--document ready functions--*/
     jQuery(document).ready(function($){
 		$("#pdf-1").unbind("click").bind("click" , function(){
-		    getBlog(this);debugger;
-
-		})//.attr("href","/assets/img/blog-1.jpg");
-			return false;
+		    getBlog(this);
+		});
+        $("#blog-btn").on("click",function(){
+            uploadBlog();
+        });
 
 
 

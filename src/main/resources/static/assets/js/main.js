@@ -5,8 +5,8 @@
 		$("#pdf-1").unbind("click").bind("click" , function(){
 		    getBlog(this);
 		});
-        $("#blog-btn").on("click",function(){
-            uploadBlog();
+        $("#uploadPage").on("click",function(){
+            window.open("/uploadPage.html");
         });
 
 

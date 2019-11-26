@@ -1,19 +1,19 @@
 package com.example.serious.demo.controller;
 
 
-import org.apache.commons.io.FileUtils;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -31,14 +31,18 @@ public class blogPage {
         return "/assets/img/blog-"+index+".jpg";
     }
     @RequestMapping(value = "/uploadBlog", method = RequestMethod.POST)
-    public void uploadBlog(HttpServletRequest request,@RequestParam(value = "img") MultipartFile multipartFile ){
+    @ResponseBody
+    public String uploadBlog(HttpServletRequest request,@RequestParam(value = "file") MultipartFile multipartFile ){
         try {
-        Resource resource = new ClassPathResource("");
-        String contextPath = resource.getURL().toString();
-        File FILE_FOR_WRITE = new File(contextPath+"/assets/img/"+multipartFile.getOriginalFilename());
-        FileUtils.writeByteArrayToFile(FILE_FOR_WRITE,multipartFile.getBytes());
+            //获取根节点
+            String path = ResourceUtils.getURL("classpath:").getPath();
+            File file = new File(path);
+            String absolutePath = file.getAbsolutePath();
+            FileCopyUtils.copy(multipartFile.getBytes(),new FileOutputStream(absolutePath+"/assets/img"+multipartFile.getOriginalFilename()));
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            return "上传完成";
         }
     }
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog 上传</title>
+    <!--Layui.css-->
+    <link href="assets/layui/css/layui.css" rel="stylesheet">
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">Title</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">Detail</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea" name="desc"></textarea>
+        </div>
+    </div>
+
+    <button type="button" class="layui-btn layui-btn-normal layui-btn-radius">上传</button>
+</form>
+<div class="layui-tab layui-tab-brief" lay-filter="demo">
+    <ul class="layui-tab-title">
+        <li class="layui-this">上传图片</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item">
+            <div class="layui-upload-drag" id="uploadDemo">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--layui js -->
+<script src="assets/layui/layui.js"></script>
+<script>
+layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function(){
+  var laydate = layui.laydate //日期
+  ,laypage = layui.laypage //分页
+  ,layer = layui.layer //弹层
+  ,table = layui.table //表格
+  ,carousel = layui.carousel //轮播
+  ,upload = layui.upload //上传
+  ,element = layui.element //元素操作
+  ,slider = layui.slider //滑块
+  //上传
+  upload.render({
+    elem: '#uploadDemo'
+    ,url: '/uploadBlog' //上传接口
+    ,done: function(res){debugger;
+      layer.msg(res);
+    }
+  });
+  });
+</script>
+</body>
+</html>

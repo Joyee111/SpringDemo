@@ -18,6 +18,7 @@ function getBlog( ele) {
 function uploadBlog(){debugger;
     var formData = new FormData();
     formData.append("img", $("#file1")[0].files[0]);
+    formData.append("name","123");
         $.ajax({
             url: "/uploadBlog",
             data: formData,
@@ -25,7 +26,7 @@ function uploadBlog(){debugger;
             contentType: false,
             processData: false,
             success: function(data) {
-                console.log(data)
+                alert(data)
             },
             error: function() {
                 alert("失败")

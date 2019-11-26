@@ -69,7 +69,10 @@
 			 <div class="col-md-6 col-md-offset-3 text-center">
 				 <div class="section-title main">
 					 <h2>My Blog</h2>
-					 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem quas error modi quaerat sequi, debitis!</p>
+					 <form action="/uploadBlog" method="POST" enctype="multipart/form-data">
+						 <input type="file" id="file1" name="img">
+                         <button id='blog-btn'> 提交</button>
+					 </form>
 				 </div>
 			 </div>
 		 </div>

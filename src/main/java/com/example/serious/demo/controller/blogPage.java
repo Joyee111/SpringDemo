@@ -1,16 +1,20 @@
 package com.example.serious.demo.controller;
 
-import com.alibaba.fastjson.JSONArray;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.io.FileUtils;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+
+import java.io.IOException;
 
 /**
  * blog页面
@@ -19,15 +23,22 @@ import java.util.Map;
 public class blogPage {
     @RequestMapping("/getBlog")
     @ResponseBody
-    public String getBlogInfo (@RequestParam(value = "id",required = false) String userCode){
-        Map<String,String> map  = new HashMap<String,String>();
-        map.put("1","1");
-        map.put("2","2");
-        map.put("3","3");
-        map.put("4","4");
-        List<Map> list = new ArrayList<Map>();
-        list.add(map);
-        System.out.print(userCode);
-        return "1234";
+    public String getBlogInfo (HttpServletRequest request, HttpServletResponse response){
+        System.out.println(request.getParameter("data"));
+        String data = request.getParameter("data");
+        String index = data.split("pdf-")[1];
+
+        return "/assets/img/blog-"+index+".jpg";
+    }
+    @RequestMapping(value = "/uploadBlog", method = RequestMethod.POST)
+    public void uploadBlog(HttpServletRequest request,@RequestParam(value = "img") MultipartFile multipartFile ){
+        try {
+        Resource resource = new ClassPathResource("");
+        String contextPath = resource.getURL().toString();
+        File FILE_FOR_WRITE = new File(contextPath+"/assets/img/"+multipartFile.getOriginalFilename());
+        FileUtils.writeByteArrayToFile(FILE_FOR_WRITE,multipartFile.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

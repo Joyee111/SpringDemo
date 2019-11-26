@@ -2,10 +2,16 @@
 	"use strict";
 /*--document ready functions--*/
     jQuery(document).ready(function($){
-		$("#pdf-1").unbind("click").bind("click" , function(){debugger;
-		    getBlog();
-		})//.attr("href","/assets/img/blog-1.jpg");
-		
+		$("#pdf-1").unbind("click").bind("click" , function(){
+		    getBlog(this);
+		});
+        $("#blog-btn").on("click",function(){
+            uploadBlog();
+        });
+
+
+
+
 	//typed activate
     $('.header-inner h6').typed({
         strings: ["", "", "JAVA"],

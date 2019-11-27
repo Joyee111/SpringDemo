@@ -32,17 +32,23 @@ public class blogPage {
     }
     @RequestMapping(value = "/uploadBlog", method = RequestMethod.POST)
     @ResponseBody
-    public String uploadBlog(HttpServletRequest request,@RequestParam(value = "file") MultipartFile multipartFile ){
+    public String uploadBlog(HttpServletRequest request,@RequestParam(value = "file") MultipartFile multipartFile ,@RequestParam(value = "title") String title,@RequestParam(value = "content")String content){
         try {
             //获取根节点
             String path = ResourceUtils.getURL("classpath:").getPath();
             File file = new File(path);
             String absolutePath = file.getAbsolutePath();
-            FileCopyUtils.copy(multipartFile.getBytes(),new FileOutputStream(absolutePath+"/assets/img"+multipartFile.getOriginalFilename()));
+            FileCopyUtils.copy(multipartFile.getBytes(),new FileOutputStream(absolutePath+"/assets/img/"+multipartFile.getOriginalFilename()));
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-            return "上传完成";
+            return "{\n" +
+                    "  \"code\": 0\n" +
+                    "  ,\"msg\": \"\"\n" +
+                    "  ,\"data\": {\n" +
+                    "    \"src\": \""+title+content+"\"\n" +
+                    "  }\n" +
+                    "}  ";
         }
     }
 }

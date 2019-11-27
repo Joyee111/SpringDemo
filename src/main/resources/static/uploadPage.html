@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <title>Blog 上传</title>
     <!--Layui.css-->
-    <link href="assets/layui/css/layui.css" rel="stylesheet">
+    <link href="assets/layui/css/layui.css" rel="stylesheet"/>
 </head>
 <body>
 <form class="layui-form" action="">
     <div class="layui-form-item">
         <label class="layui-form-label">Title</label>
         <div class="layui-input-block">
-            <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+            <input id="title" value="" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">Detail</label>
         <div class="layui-input-block">
-            <textarea placeholder="请输入内容" class="layui-textarea" name="desc"></textarea>
+            <textarea id="content" value="" placeholder="请输入内容" class="layui-textarea" name="desc"></textarea>
         </div>
     </div>
 
-    <button type="button" class="layui-btn layui-btn-normal layui-btn-radius">上传</button>
+    <button type="button" class="layui-btn layui-btn-normal layui-btn-radius" id="testListAction">上传</button>
 </form>
 <div class="layui-tab layui-tab-brief" lay-filter="demo">
     <ul class="layui-tab-title">
@@ -39,25 +39,35 @@
 
 <!--layui js -->
 <script src="assets/layui/layui.js"></script>
-<script>
-layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function(){
-  var laydate = layui.laydate //日期
-  ,laypage = layui.laypage //分页
-  ,layer = layui.layer //弹层
-  ,table = layui.table //表格
-  ,carousel = layui.carousel //轮播
-  ,upload = layui.upload //上传
-  ,element = layui.element //元素操作
-  ,slider = layui.slider //滑块
-  //上传
-  upload.render({
-    elem: '#uploadDemo'
-    ,url: '/uploadBlog' //上传接口
-    ,done: function(res){debugger;
-      layer.msg(res);
-    }
-  });
-  });
-</script>
+<script src="assets/js/jquery.js"></script>
+<!--Isotope script load-->
+<script src="assets/js/isotope.pkgd.js"></script>
+<!-- magnific popup script load-->
+<script src="assets/js/jquery.magnific-popup.js"></script>
+<!--way point script load-->
+<script src="assets/js/waypoints.min.js"></script>
+<!--line progress bar script load-->
+<script src="assets/js/circle-progress.min.js"></script>
+<!-- counter up script load-->
+<script src="assets/js/typed.js"></script>
+<!-- typed script load-->
+<script src="assets/js/jquery.counterup.min.js"></script>
+<!--Owl carousel script load-->
+<script src="assets/js/owl.carousel.min.js"></script>
+<!--Image load script -->
+<script src="assets/js/imagesloaded.pkgd.js"></script>
+<!--Bootstrap v3 script load here-->
+<script src="assets/js/bootstrap.min.js"></script>
+<!--Slick Nav Js File Load-->
+<script src="assets/js/jquery.slicknav.min.js"></script>
+<!--Wow Js File Load-->
+<script src="assets/js/wow.min.js"></script>
+<!--Wow Js File Load-->
+<script src="assets/js/scrollspy.js"></script>
+<!--Main js file load-->
+<script src="assets/js/main.js"></script>
+<!--blog js file load-->
+<script src="assets/js/blog.js"></script>
+
 </body>
 </html>

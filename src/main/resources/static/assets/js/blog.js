@@ -16,11 +16,11 @@ upload.render({
   ,url: '/uploadBlog'
   ,auto: false //选择文件后不自动上传
   ,data:{
-        title: function(){debugger;
-        title.value;
+        title: function(){
+        return  $("#title").val();
         }
-        ,content: function(){debugger;
-        content.value;
+        ,content: function(){
+         return $("#content").val();
         }
   }
   ,bindAction: '#testListAction' //指向一个按钮触发上传

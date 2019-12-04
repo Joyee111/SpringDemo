@@ -21,6 +21,7 @@ import java.io.IOException;
  */
 @Controller
 public class blogPage {
+
     @RequestMapping("/getBlog")
     @ResponseBody
     public String getBlogInfo (HttpServletRequest request, HttpServletResponse response){

@@ -70,69 +70,11 @@
 		 <div class="row">
 			 <div class="col-md-6 col-md-offset-3 text-center">
 				 <div class="section-title main">
-					 <h2>My Blog</h2>
-<!--					 <form>
-						 <input type="file" id="file1" name="img">
-                         <button id='blog-btn' type="button"> 提交</button>
-					 </form>-->
-<!--					 <div class="layui-tab-item">
-						 <div class="layui-upload-drag" id="uploadDemo">
-							 <i class="layui-icon"></i>
-							 <p>点击上传，或将文件拖拽到此处</p>
-						 </div>
-					 </div>-->
-					 <div>
-						 <button type="button" id="uploadPage">UPLOAD</button>
-					 </div>
+					 <h2 id="uploadPage">My Blog</h2>
 				 </div>
 			 </div>
 		 </div>
-		 <div class="row">
-			 <div class="col-md-4 col-sm-6">
-				 <div class="single-blog-post">
-<!--					 <div class="post-thumb">
-						 <img src="assets/img/blog-1.jpg" alt=" blog image">
-					 </div>-->
-					 <h4>SPRING 全家桶</h4>
-					 <ul class="post-meta">
-						 <li><i class="fa fa-clock-o"></i> 05 Jan 2018</li>
-						 <li><i class="fa fa-user"></i> By <a href="#">Admin</a></li>
-						 <li><i class="fa fa-comments"></i> 27</li>
-					 </ul>
-					 <p>Spring是一个应用广泛社区活跃的开源框架，包含完整的项目搭建，分布式项目问题解决，来一起学习Spring吧!</p>
-					 <a id="pdf-1" href="" class="boxed-btn">Read More</a>
-				 </div>
-			 </div>
-			 <div class="col-md-4 col-sm-6">
-				 <div class="single-blog-post">
-<!--					 <div class="post-thumb">
-						 <img src="assets/img/blog-2.jpg" alt=" blog image">
-					 </div>-->
-					 <h4>STANdard POST WITH IMAGE</h4>
-					 <ul class="post-meta">
-						 <li><i class="fa fa-clock-o"></i> 05 Jan 2018</li>
-						 <li><i class="fa fa-user"></i> By <a href="#">Admin</a></li>
-						 <li><i class="fa fa-comments"></i> 27</li>
-					 </ul>
-					 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, excepturi modi eius a vel accusamus!</p>
-					 <a href="#" class="boxed-btn">Read More</a>
-				 </div>
-			 </div>
-			 <div class="col-md-4 col-sm-6">
-				 <div class="single-blog-post">
-<!--					 <div class="post-thumb">
-						 <img src="assets/img/blog-3.jpg" alt=" blog image">
-					 </div>-->
-					 <h4>STANdard POST WITH IMAGE</h4>
-					 <ul class="post-meta">
-						 <li><i class="fa fa-clock-o"></i> 05 Jan 2018</li>
-						 <li><i class="fa fa-user"></i> By <a href="#">Admin</a></li>
-						 <li><i class="fa fa-comments"></i> 27</li>
-					 </ul>
-					 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, excepturi modi eius a vel accusamus!</p>
-					 <a href="#" class="boxed-btn">Read More</a>
-				 </div>
-			 </div>
+		 <div class="row" id="blogEle" style="margin-top: 90px;">
 		 </div>
 	 </div>
  </section>
@@ -196,7 +138,7 @@
 					 </div>
 				 </div>
 				 <div class="col-md-4 col-sm-6">
-					 <div class="single-service-box">
+					 <div class="single-service-box" id="wechatPic">
 						 <div class="icon">
 							 <img src="assets/img/service-6.png" alt="service icon">
 						 </div>
@@ -772,6 +714,8 @@
     <script src="assets/js/scrollspy.js"></script>
     <!--Main js file load-->
     <script src="assets/js/main.js"></script>
+ 	<!--Blog js file load-->
+ 	<script src="assets/js/blog.js"></script>
 
 </body>
 </html>

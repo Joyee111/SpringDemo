@@ -1,14 +1,16 @@
 (function ($) {
 	"use strict";
 /*--document ready functions--*/
-    jQuery(document).ready(function($){
-		$("#pdf-1").unbind("click").bind("click" , function(){
-		    getBlog(this);
-		});
+    jQuery(document).ready(function($){debugger;
+		getBlog(this);
+
         $("#uploadPage").on("click",function(){
             window.open("/uploadPage.html");
         });
 
+        $("#wechatPic").on("click",function(){
+            window.open("/assets/img/service-6.jpg");
+        });
 
 
 

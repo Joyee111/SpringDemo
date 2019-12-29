@@ -3,9 +3,10 @@ package com.example.serious.demo.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class User {
+public class User implements Serializable {
     private int id;
     private  String name;
     private String password;
@@ -41,6 +42,16 @@ public class User {
 
     public void setMobilePhone(String mobilePhone) {
         this.mobilePhone = mobilePhone;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", mobilePhone='" + mobilePhone + '\'' +
+                '}';
     }
 
     @Override

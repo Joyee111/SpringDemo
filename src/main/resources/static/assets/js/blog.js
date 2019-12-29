@@ -37,23 +37,36 @@ upload.render({
   });
 
 function getBlog( ele) {
-    /*    var htmlobj=$.ajax({url:"/getBlog",async:false});
-        $.post("/getBlog","1",function (data) {
-            alert(data);
-
-        })*/
-
+debugger;
     var data = $.ajax({
         type: "post",
-        data: {"data": ele.id},
+        data: {"author": "admin"},
         dataType: "text",
         url: "/getBlog",
         success :function(data) {
-            window.open(data);
+            var jsonObj = JSON.parse(data);
+            for(var i = 0; i<jsonObj.length;i++){
+                if(i>2){
+                    return;
+                }
+                $("#blogEle").append("<div class=\"col-md-4 col-sm-6\">\n" +
+                    "\t\t\t\t <div class=\"single-blog-post\">\n" +
+                    "\t\t\t\t\t <h4>"+jsonObj[i].title+"</h4>\n" +
+                    "\t\t\t\t\t <ul class=\"post-meta\">\n" +
+                    "\t\t\t\t\t\t <li><i class=\"fa fa-clock-o\"></i> "+new Date(jsonObj[i].s_atime).toLocaleString()+"</li>\n" +
+                    "\t\t\t\t\t\t <li><i class=\"fa fa-user\"></i> By <a href=\"#\">"+jsonObj[i].author+"</a></li>\n" +
+                    "\t\t\t\t\t\t <li><i class=\"fa fa-comments\"></i> 27</li>\n" +
+                    "\t\t\t\t\t </ul>\n" +
+                    "\t\t\t\t\t <p>"+jsonObj[i].description+"</p>\n" +
+                    "\t\t\t\t\t <a  href='"+jsonObj[i].imgUrl+"' class=\"boxed-btn\">Read More</a>\n" +
+                    "\t\t\t\t </div>\n" +
+                    "\t\t\t </div>");
+
+            }
         }
 });
 }
-function uploadBlog(){debugger;
+function uploadBlog(){
     var formData = new FormData();
     formData.append("img", $("#file1")[0].files[0]);
     formData.append("name","123");

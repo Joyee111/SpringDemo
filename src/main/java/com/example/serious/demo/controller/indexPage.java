@@ -1,5 +1,7 @@
 package com.example.serious.demo.controller;
 
+import com.example.serious.demo.domain.User;
+import com.example.serious.demo.mapper.UserMapper;
 import com.example.serious.demo.service.DemoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 public class indexPage {
     @Autowired
     DemoService demoService;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(indexPage.class);
 

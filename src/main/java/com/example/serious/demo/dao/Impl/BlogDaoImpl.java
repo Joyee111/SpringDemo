@@ -1,16 +1,20 @@
 package com.example.serious.demo.dao.Impl;
 
-import com.example.serious.demo.controller.indexPage;
 import com.example.serious.demo.dao.BlogDao;
-import com.example.serious.demo.po.Blog;
+import com.example.serious.demo.domain.Blog;
+import com.example.serious.demo.mapper.BlogMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
+import java.util.List;
+
 
 @Repository
 public class BlogDaoImpl implements BlogDao {
+    @Autowired
+    BlogMapper blogMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(BlogDaoImpl.class);
     @Override
     public Blog getAllBlogInfo() {
@@ -20,5 +24,21 @@ public class BlogDaoImpl implements BlogDao {
     @Override
     public Blog getBlog() {
         return null;
+    }
+
+    @Override
+    public int setBlog(Blog blog) {
+        try{
+        blogMapper.insertBlog(blog);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Blog> findAllBlog() {
+
+        return blogMapper.findAllBlog();
     }
 }

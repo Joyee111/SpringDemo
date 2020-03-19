@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #img {
+            opacity: 0.4;
+            position: fixed;
+        }
+
+        body {
+            height: 700px;
+            width: 500px;
+        }
+
+        .real {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<!--    <input type="button" id="download" value="下载Canvas图片"/>
+    <canvas id="the-canvas" >your browser does not support the canvas tag </canvas>-->
+<select id="seal_name">
+    <option value="assets/img/contact-icon-1.png">1号印章</option>
+    <option value="assets/img/like.png">2号印章</option>
+    <option value="assets/img/coffe-cup.png">3号印章</option>
+</select>
+<input id="download" type="button" value="下载Canvas图片"/>
+<div id='pop'>
+    <img id="img" src="">
+</div>
+<script src="assets/js/jquery.js"></script>
+<script src="assets/pdfjs-dist/build/pdf.js"></script>
+<script src="assets/pdfjs-dist/build/pdf.worker.js"></script>
+<script src="assets/js/pdf_picture.js"></script>
+</body>
+</html>

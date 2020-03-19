@@ -1,7 +1,7 @@
 (function ($) {
 	"use strict";
 /*--document ready functions--*/
-    jQuery(document).ready(function($){debugger;
+    jQuery(document).ready(function($){
 		getBlog(this);
 
         $("#uploadPage").on("click",function(){
@@ -12,7 +12,9 @@
             window.open("/assets/img/service-6.jpg");
         });
 
-
+        $("#pdf_picture").on("click",function(){
+            window.open("/pdf_picture.html");
+        });
 
 	//typed activate
     $('.header-inner h6').typed({

@@ -37,7 +37,7 @@ upload.render({
   });
 
 function getBlog( ele) {
-debugger;
+
     var data = $.ajax({
         type: "post",
         data: {"author": "admin"},

@@ -22,9 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * blog页面
@@ -47,6 +46,7 @@ public class blogPage {
     @ResponseBody
     public String uploadBlog(HttpServletRequest request,@RequestParam(value = "file") MultipartFile multipartFile ,@RequestParam(value = "title") String title,@RequestParam(value = "content")String content){
         try {
+
             //获取根节点
             String path = ResourceUtils.getURL("classpath:").getPath();
             File file = new File(path);

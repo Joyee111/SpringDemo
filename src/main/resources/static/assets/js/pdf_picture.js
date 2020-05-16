@@ -14,7 +14,7 @@ function saveAsLocalImage() {
 }
 
 function showPdf() {
-    let url = '123.pdf'//char2buf(data);
+    let url = 'zw.pdf'//char2buf(data);
     const loadingTask = pdfjsLib.getDocument(url);
     loadingTask.promise.then(function (pdf) {
         //

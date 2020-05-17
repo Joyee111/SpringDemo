@@ -28,12 +28,13 @@ public class BlogDaoImpl implements BlogDao {
 
     @Override
     public int setBlog(Blog blog) {
+        int result = 0;
         try{
-        blogMapper.insertBlog(blog);
+            result = blogMapper.insertBlog(blog);
         }catch(Exception e){
             e.printStackTrace();
         }
-        return 0;
+        return result;
     }
 
     @Override

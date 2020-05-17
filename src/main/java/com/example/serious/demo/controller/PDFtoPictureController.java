@@ -46,4 +46,12 @@ public class PDFtoPictureController {
         }
         return "OK";
     }
+
+    public String bytetoString(@RequestParam("byte") String bytes){
+        byte[] bytePics = Base64.getDecoder().decode(bytes);
+        for(byte bytePic : bytePics){
+            bytePic+=256;
+        }
+        return "";
+    }
 }

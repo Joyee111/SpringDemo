@@ -1,4 +1,95 @@
+
+/*three.js start*/
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+var geometry = new THREE.BoxGeometry();
+
+var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
+
+camera.position.z = 5;
+function animate() {
+    requestAnimationFrame( animate );
+    renderer.render( scene, camera );
+    cube.rotation.x += 0.05;
+    cube.rotation.y += 0.05;
+}
+
+var loader = new THREE.FontLoader();
+
+loader.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+
+    var geometry = new THREE.TextGeometry( 'Hello three.js!', {
+        font: font,
+        size: 80,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelOffset: 0,
+        bevelSegments: 5
+    } );
+} );
+
+animate();
+function onDocumentKeyPress( event ) {
+
+    var keyCode = event.which;
+
+    // backspace
+
+    if ( keyCode == 8 ) {
+
+        event.preventDefault();
+
+    } else {
+
+        var ch = String.fromCharCode( keyCode );
+        text += ch;
+
+        refreshText();
+
+    }
+
+}
+document.addEventListener( 'keypress', onDocumentKeyPress, false );
+document.addEventListener( 'keydown', onDocumentKeyDown, false );
+function onDocumentKeyDown( event ) {
+
+    if ( firstLetter ) {
+
+        firstLetter = false;
+        text = "";
+
+    }
+
+    var keyCode = event.keyCode;
+
+    // backspace
+
+    if ( keyCode == 8 ) {
+
+        event.preventDefault();
+
+        text = text.substring( 0, text.length - 1 );
+        refreshText();
+
+        return false;
+
+    }
+
+}
+
+/*three.js end*/
 showPdf();
+
 $("#download").click(function () {
     saveAsLocalImage();
 });

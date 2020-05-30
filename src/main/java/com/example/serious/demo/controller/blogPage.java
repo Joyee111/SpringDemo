@@ -53,8 +53,10 @@ public class blogPage {
             array= JSONArray.parseArray(JSON.toJSONString(listBlog));
             jedis.set("blogs_"+author,JSON.toJSONString(listBlog),SetParams.setParams().ex(3600));
         }
-
-        System.out.println(request.getParameter("author"));
+        jedis.lpush("test","1");
+        jedis.lpush("test","2");
+        jedis.rpush("test","0");
+        System.out.println(jedis.lrange("test",0,-1));
 
 
         return array.toJSONString();

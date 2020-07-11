@@ -2,6 +2,10 @@ package com.example.serious.demo.controller;
 
 import com.example.serious.demo.mapper.UserMapper;
 import com.example.serious.demo.service.Impl.ansyTestService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
@@ -12,23 +16,35 @@ import org.junit.Test;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
-@Controller
+@RestController
+@Api(tags = "测试接口")
+@RequestMapping("/test")
 public class ansyTestController {
 
     @Autowired
     ansyTestService ansyTestService;
 
-    @RequestMapping("test")
-    public  Integer methodA() throws Exception{
+    @PostMapping("/testApi")
+    @ApiOperation("添加用户的接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户名", defaultValue = "李四"),
+            @ApiImplicitParam(name = "address", value = "用户地址", defaultValue = "深圳", required = true)
+    }
+    )
+    public  Integer methodA( String username, @RequestParam(required = true) String address) throws Exception{
         long start = System.currentTimeMillis();
         Future<Integer> future1 =ansyTestService.methodB();
         long end = System.currentTimeMillis();
@@ -47,6 +63,9 @@ public class ansyTestController {
 
         SqlSession sqlSession = sqlSessionFactory.openSession();
         sqlSession.getMapper(UserMapper.class);
+        Map<String,Object> map2 = new HashMap<>();
+        map2.put("1",new HashMap<String,String>());
+
 
     }
 

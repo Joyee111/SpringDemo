@@ -59,6 +59,7 @@ function getBlog(ele) {
                 if (i > 2) {
                     return;
                 }
+
                 $("#blogEle").append("<div class=\"single-porfolio-item grid-size design\">\n" +
                     "\t\t\t\t <div class=\"single-blog-post\">\n" +
                     "<img src=" + jsonObj[i].imgUrl + "  alt=\" portfolio image \" style=\"height:150px\">" +
@@ -78,7 +79,7 @@ function getBlog(ele) {
                     "\t\t\t\t\t\t <li><i class=\"fa fa-user\"></i> By <a href=\"#\">" + jsonObj[i].author + "</a></li>\n" +
                     "\t\t\t\t\t\t <li><i class=\"fa fa-comments\"></i> 27</li>\n" +
                     "\t\t\t\t\t </ul>\n" +
-                    "\t\t\t\t\t <p>" + jsonObj[i].description + "</p>\n" +
+                    "\t\t\t\t\t <p>" + jsonObj[i].description.substring(0,20) + "...</p>\n" +
                     "\t\t\t\t\t <a  href='" + jsonObj[i].imgUrl + "' class=\"boxed-btn\">Read More</a>\n" +
                     "\t\t\t\t </div>\n" +
                     "\t\t\t </div>");

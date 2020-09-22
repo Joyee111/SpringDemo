@@ -21,8 +21,10 @@ import redis.clients.jedis.JedisPoolAbstract;
 import redis.clients.jedis.params.SetParams;
 
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,23 +42,23 @@ public class blogPage {
     @RequestMapping("/getBlog")
     @ResponseBody
     public String getBlogInfo (HttpServletRequest request, HttpServletResponse response){
+        HttpSession session = request.getSession();
         Jedis jedis = JedisUtils.getInstance("localhost");
-        String author = request.getParameter("author");
+        String author = request.getParameter("author")+request.getRequestedSessionId();
         JSONArray array;
 
         if(jedis.exists("blogs_"+author)){
             String blogResult = jedis.get("blogs_"+author);
             array= JSONArray.parseArray(blogResult);
+            System.out.println(session.getId());
         }else{
             //第一次查询当前用户blog信息
             List<Blog> listBlog = blogDao.findAllBlog();
             array= JSONArray.parseArray(JSON.toJSONString(listBlog));
             jedis.set("blogs_"+author,JSON.toJSONString(listBlog),SetParams.setParams().ex(3600));
+            System.out.println("第一次登陆的"+session.getId());
         }
-        jedis.lpush("test","1");
-        jedis.lpush("test","2");
-        jedis.rpush("test","0");
-        System.out.println(jedis.lrange("test",0,-1));
+
 
 
         return array.toJSONString();

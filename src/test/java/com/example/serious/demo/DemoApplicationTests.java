@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @SpringBootTest
-class DemoApplicationTests {
+class DemoApplicationTests extends Thread{
 
     @Test
     void contextLoads() {
@@ -34,4 +34,8 @@ class DemoApplicationTests {
         return maxLength;
     }
 
+    @Override
+    public void run() {
+        super.run();
+    }
 }

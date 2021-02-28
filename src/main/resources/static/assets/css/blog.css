@@ -7,5 +7,6 @@
 .post-thumb img:hover {
     transform: scale(1.4);
 }
-
+/*在ie的input框中输入时去掉删除按钮*/
+input::-ms-clear{display:none;}
  

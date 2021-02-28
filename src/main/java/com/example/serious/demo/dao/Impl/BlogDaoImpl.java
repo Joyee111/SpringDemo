@@ -2,6 +2,7 @@ package com.example.serious.demo.dao.Impl;
 
 import com.example.serious.demo.dao.BlogDao;
 import com.example.serious.demo.domain.Blog;
+import com.example.serious.demo.domain.TestEntity;
 import com.example.serious.demo.mapper.BlogMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,4 +43,17 @@ public class BlogDaoImpl implements BlogDao {
 
         return blogMapper.findAllBlog();
     }
+
+    @Override
+    public int insertData(TestEntity testEntity) {
+        int result = 0;
+        try{
+            //result = blogMapper.insertData(testEntity);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
 }

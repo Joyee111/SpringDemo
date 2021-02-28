@@ -48,8 +48,8 @@ public class blogPage {
         Jedis jedis = JedisUtils.getInstance("localhost");
         String author = request.getParameter("author") + request.getRequestedSessionId();
         JSONArray array;
-
-        for (int i = 0; i < 1000000; i++) {
+/*测试数据库explain*/
+/*        for (int i = 0; i < 10; i++) {
             TestEntity testEntity = new TestEntity();
             testEntity.setKey2(i);
             testEntity.setKey1(RandomUtil.getRandomString(10));
@@ -59,7 +59,7 @@ public class blogPage {
             testEntity.setKey_part3(RandomUtil.getRandomString(10));
             testEntity.setCommon_field(RandomUtil.getRandomString(10));
             blogDao.insertData(testEntity);
-        }
+        }*/
 
         if (jedis.exists("blogs_" + author)) {
             String blogResult = jedis.get("blogs_" + author);

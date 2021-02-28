@@ -5,6 +5,7 @@ var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHe
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.domElement.setAttribute("id","canvas-three");
 document.body.appendChild( renderer.domElement );
 
 var geometry = new THREE.BoxGeometry();
@@ -59,8 +60,8 @@ function onDocumentKeyPress( event ) {
     }
 
 }
-document.addEventListener( 'keypress', onDocumentKeyPress, false );
-document.addEventListener( 'keydown', onDocumentKeyDown, false );
+//document.addEventListener( 'keypress', onDocumentKeyPress, false );
+//document.addEventListener( 'keydown', onDocumentKeyDown, false );
 function onDocumentKeyDown( event ) {
 
     if ( firstLetter ) {
@@ -95,15 +96,39 @@ $("#download").click(function () {
 });
 
 function saveAsLocalImage() {
-    var myCanvas = document.getElementById("the-canvas");
-    var image = myCanvas.toDataURL("image/png");
+    var myCanvas = document.getElementById("canvas-three");
+    var image = myCanvas.toDataURL();
     $.post({
         url: "downloadPic.do",
         data: {'image': image},
-        async: true
+        async: true,
+        success:function(){
+            window.location.href="/123.png";
+        }
     });
 }
+$("#bilibiliSearchBtn").click(function(){
+        var keyword = $("#bilibili_text").val();
 
+        $.post({
+            url: "searchBilibili.do",
+            data: {'keyword': keyword},
+            async: true,
+            success:function(data){
+            $.each(data.data.result,function(index,element){
+                var itemTitle = "<div id ='title"+index+"'>【标题】"+element.title+"</div>";
+                var itemTag = "<div>【类型】："+element.tag+"</div>";
+                var author = "<div>【作者】"+element.author+"</div>";
+                var itemIframe = "<iframe src='//player.bilibili.com/player.html?aid="+element.aid+"&bvid="+element.bvid+"&page=1' scrolling='no' border='0' frameborder='no' framespacing='0' allowfullscreen='true'> </iframe>";
+
+                $("#pop").append(itemTitle+itemTag+author+itemIframe);
+                $("#title"+index).click(function(){
+                    window.open(element.arcurl);
+                })
+            })
+            }
+        });
+});
 function showPdf() {
     let url = 'zw.pdf'//char2buf(data);
     const loadingTask = pdfjsLib.getDocument(url);
@@ -160,8 +185,8 @@ $("#pop").mousemove(function (event) {
     var xImg = img.clientWidth;
     var yImg = img.clientHeight;
     //设置图片坐标
-    img.style.left = (x1) + "px";//- xImg/2
-    img.style.top = (y1) + "px";// - yImg/2
+    img.style.left = (x1- xImg/2) + "px";//
+    img.style.top = (y1- yImg/2) + "px";//
 })
 $("#img").click(function (event) {
     var img = document.getElementById("img");
@@ -180,7 +205,7 @@ $("#img").click(function (event) {
     var pop_x_to_pic = pop.offsetLeft;
     var pop_y_to_pic = pop.offsetTop;
     console.log("印章相对pdf的位置x:" + (seal_x_to_pic - pop_x_to_pic) + "  y:" + (seal_y_to_pic - pop_y_to_pic));
-    $("#pop").append("<img class='real' src='" + $("#seal_name").children('option:selected').val() + "' style='left: " + (seal_x_to_pic) + "px; top: " + (seal_y_to_pic) + "px;'>")
+    $("#pop").append("<img class='real' src='" + $("#seal_name").children('option:selected').val() + "' style='left: " + (seal_x_to_pic - 4*pop_x_to_pic) + "px; top: " + (seal_y_to_pic - pop_y_to_pic) + "px;'>")
 });
 $("#seal_name").change(function () {
     var selected = $(this).children('option:selected').val();

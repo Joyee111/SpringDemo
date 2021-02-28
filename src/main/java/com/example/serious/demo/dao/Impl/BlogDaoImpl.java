@@ -48,7 +48,7 @@ public class BlogDaoImpl implements BlogDao {
     public int insertData(TestEntity testEntity) {
         int result = 0;
         try{
-            //result = blogMapper.insertData(testEntity);
+            result = blogMapper.insertData(testEntity);
         }catch (Exception e){
             e.printStackTrace();
         }

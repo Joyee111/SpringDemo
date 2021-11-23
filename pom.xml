@@ -37,6 +37,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>HttpClient</artifactId>
             <version>4.5.12</version>
@@ -72,6 +76,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.38</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.16</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -156,16 +166,16 @@
         </dependency>
     </dependencies>
 
-    <build>
+<!--    <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                <fork>true</fork>     <!--fork :  如果没有该项配置，devtools不会起作用，即应用不会restart -->
+                <fork>true</fork>     &lt;!&ndash;fork :  如果没有该项配置，devtools不会起作用，即应用不会restart &ndash;&gt;
             </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 </project>

@@ -3,14 +3,19 @@ package com.example.serious.demo.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.example.serious.demo.Aspect.demoAspect;
 import com.example.serious.demo.dao.BlogDao;
 import com.example.serious.demo.domain.Blog;
 import com.example.serious.demo.domain.TestEntity;
 import com.example.serious.demo.mapper.BlogMapper;
+import com.example.serious.demo.util.AspectUtils;
 import com.example.serious.demo.util.JedisUtils;
 import com.example.serious.demo.util.RandomUtil;
 import com.sun.media.jfxmedia.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -36,11 +41,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * blog页面
  */
+@Slf4j
 @Controller
 public class blogPage {
     @Autowired
     BlogDao blogDao;
-
+    @AspectUtils
     @RequestMapping("/getBlog")
     @ResponseBody
     public String getBlogInfo(HttpServletRequest request, HttpServletResponse response) {
@@ -79,6 +85,7 @@ public class blogPage {
 
     @RequestMapping(value = "/uploadBlog", method = RequestMethod.POST)
     @ResponseBody
+    @AspectUtils
     public String uploadBlog(HttpServletRequest request, @RequestParam(value = "file") MultipartFile multipartFile, @RequestParam(value = "title") String title, @RequestParam(value = "content") String content, @RequestParam(value = "usercode") String usercode) {
         Jedis jedis = JedisUtils.getInstance("localhost");
         try {
@@ -110,5 +117,17 @@ public class blogPage {
                     "  }\n" +
                     "}  ";
         }
+    }
+
+    public void beforegetBlogInfo(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("aa","1");
+
+
+    }
+
+    public void aftergetBlogInfo(HttpServletRequest request, HttpServletResponse response) {
+        log.info((String) request.getAttribute("aa"));
+
+
     }
 }

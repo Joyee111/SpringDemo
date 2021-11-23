@@ -13,9 +13,9 @@ import java.lang.reflect.Method;
 
 @Controller
 public class DynamicClassLoadServ extends ClassLoader{
-@GetMapping(value = "setClass")
+@GetMapping(value = "/setClass")
     protected String findClass(@RequestParam(value = "uri") String packageUri , @RequestParam(value = "name") String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        byte[] classData = getClassData(packageUri,name);
+        byte[] classData = getClassData("D:\\workspace\\SpringDemo\\target\\classes",name);
         if (classData == null) {
             throw new ClassNotFoundException();
         }
@@ -62,7 +62,7 @@ public class DynamicClassLoadServ extends ClassLoader{
     }
 
     private String classNameToPath(String packageUri , String className) {
-        return packageUri + File.separatorChar
+        return packageUri.replace('.', File.separatorChar) + File.separatorChar
                 + className.replace('.', File.separatorChar) + ".class";
     }
 }

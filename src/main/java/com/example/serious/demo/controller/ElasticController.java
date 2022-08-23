@@ -33,23 +33,28 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/elasticsearch")
+
 public class ElasticController {
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;
 
-    @RequestMapping("/elasticsearch/add")
+    @RequestMapping("/add")
     public String add() throws IOException {
         /**
          * 向ES中的索引christy下的type类型中添加一天文档
          */
-        IndexRequest indexRequest = new IndexRequest("christy","user","11");
-        indexRequest.source("{\"name\":\"齐天大圣孙悟空\",\"age\":685,\"bir\":\"1685-01-01\",\"introduce\":\"花果山水帘洞美猴王齐天大圣孙悟空是也！\"," +
-                "\"address\":\"花果山\"}", XContentType.JSON);
+        IndexRequest indexRequest = new IndexRequest("christy","user","13");
+        indexRequest.source("{\"name\":\"天蓬元帅猪八戒\",\"age\":985,\"bir\":\"1685-01-01\",\"introduce\":\"天蓬元帅猪八戒因调戏嫦娥被贬下凡\",\"address\":\"高老庄\"}", XContentType.JSON);
         IndexResponse indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+
+
+
         return indexResponse.status().toString();
     }
 
+    @RequestMapping("/updateDoc")
     public void updateDoc() throws IOException {
         UpdateRequest updateRequest = new UpdateRequest("christy","user","p4AtG3kBRz-Sn-2fMFjj");
         updateRequest.doc("{\"name\":\"调皮捣蛋的hardy\"}",XContentType.JSON);
@@ -57,6 +62,7 @@ public class ElasticController {
         System.out.println(updateResponse.status());
     }
 
+    @RequestMapping("/deleteDoc")
     public void deleteDoc() throws IOException {
         // 我们把特朗普删除了
         DeleteRequest deleteRequest = new DeleteRequest("christy","user","rYBNG3kBRz-Sn-2f3ViU");
@@ -64,6 +70,7 @@ public class ElasticController {
         System.out.println(deleteResponse.status());
     }
 
+    @RequestMapping("/bulkUpdate")
     public void bulkUpdate() throws IOException {
         BulkRequest bulkRequest = new BulkRequest();
         // 添加
@@ -91,6 +98,7 @@ public class ElasticController {
         }
     }
 
+    @RequestMapping("/testSearch")
     public void testSearch() throws IOException {
         //创建搜索对象
         SearchRequest searchRequest = new SearchRequest("christy");
@@ -101,7 +109,7 @@ public class ElasticController {
                 .from(0)//起始条数
                 .size(10)//每页展示记录
                 .postFilter(QueryBuilders.matchAllQuery()) //过滤条件
-                .sort("age", SortOrder.DESC);//排序
+                .sort("age", SortOrder.DESC).highlighter(new HighlightBuilder().field("age").requireFieldMatch(false).preTags("<span style='color:red;'>").postTags("</span>"));//排序
 
         //创建搜索请求
         searchRequest.types("user").source(searchSourceBuilder);
@@ -116,16 +124,17 @@ public class ElasticController {
         }
     }
 
-    public void testHighLightQuery() throws IOException, ParseException {
+    @RequestMapping("/testHighLightQuery")
+    public String testHighLightQuery(String name) throws IOException, ParseException {
         // 创建搜索请求
         SearchRequest searchRequest = new SearchRequest("christy");
         // 创建搜索对象
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.termQuery("introduce", "唐僧"))    // 设置查询条件
+        searchSourceBuilder.query(QueryBuilders.commonTermsQuery("name", name))    // 设置查询条件
                 .from(0)    // 起始条数(当前页-1)*size的值
                 .size(10)   // 每页展示条数
                 .sort("age", SortOrder.DESC)    // 排序
-                .highlighter(new HighlightBuilder().field("*").requireFieldMatch(false).preTags("<span style='color:red;'>").postTags("</span>"));  // 设置高亮
+                .highlighter(new HighlightBuilder().field("name").requireFieldMatch(false).preTags("<span style='color:red;'>").postTags("</span>"));  // 设置高亮
         searchRequest.types("user").source(searchSourceBuilder);
 
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
@@ -134,7 +143,7 @@ public class ElasticController {
         List<UserEs> userList = new ArrayList<>();
         for (SearchHit hit : hits) {
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-
+            hit.getHighlightFields();
             UserEs user = new UserEs();
             user.setId(hit.getId());
             user.setAge(Integer.parseInt(sourceAsMap.get("age").toString()));
@@ -158,7 +167,8 @@ public class ElasticController {
 
             userList.add(user);
         }
-
-        userList.forEach(user -> System.out.println(user));
+        StringBuilder stringBuilder = new StringBuilder();
+        userList.forEach(user -> stringBuilder.append(user.toString()));
+        return stringBuilder.toString();
     }
 }

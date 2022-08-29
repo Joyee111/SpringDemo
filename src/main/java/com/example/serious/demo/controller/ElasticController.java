@@ -56,7 +56,7 @@ public class ElasticController {
 
     @RequestMapping("/updateDoc")
     public void updateDoc() throws IOException {
-        UpdateRequest updateRequest = new UpdateRequest("christy","user","p4AtG3kBRz-Sn-2fMFjj");
+        UpdateRequest updateRequest = new UpdateRequest("christy","user","13");
         updateRequest.doc("{\"name\":\"调皮捣蛋的hardy\"}",XContentType.JSON);
         UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
         System.out.println(updateResponse.status());

@@ -30,11 +30,36 @@ class DemoApplicationTests extends Thread{
     @Test
     void contextLoads() {
     }
+    //static String[] cmdParts1 = {"java -jar D:\\chromeDownload\\chromeDownload\\tika-server-standard-2.4.1.jar --p 1234"};
+    static String[] getCmdParts2 = {"curl", "-T", "D:\\日语预习包\\学习资料\\我的用法.docx","http://localhost:9998/tika","Accept: text/plain"};
+
 
     public static void main(String[] args) throws TikaException, IOException, SAXException {
-        log.info(toTika());
-    }
+        //log.info(toTika());
+        log.info(tikaByCurl(getCmdParts2));
 
+    }
+    public static String tikaByCurl(String[] cmdParts){
+        ProcessBuilder process = new ProcessBuilder(cmdParts);
+        Process p;
+        try {
+            p = process.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+                builder.append(System.getProperty("line.separator"));
+            }
+
+            return builder.toString();
+        } catch (IOException e) {
+            System.out.print("error");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     @Override
     public void run() {

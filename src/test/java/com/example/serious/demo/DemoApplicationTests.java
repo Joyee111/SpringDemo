@@ -1,22 +1,30 @@
 package com.example.serious.demo;
 
-import org.apache.tika.config.TikaConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.Request;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import javax.xml.ws.Response;
 import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @SpringBootTest
+@Slf4j
 class DemoApplicationTests extends Thread{
 
     @Test
@@ -24,12 +32,7 @@ class DemoApplicationTests extends Thread{
     }
 
     public static void main(String[] args) throws TikaException, IOException, SAXException {
-        try{
-            parseToPlainText();
-        }catch (Exception e){
-
-        }
-
+        log.info(toTika());
     }
 
 
@@ -116,4 +119,22 @@ class DemoApplicationTests extends Thread{
 
     }
 
+
+    public static String toTika() throws IOException {
+        String url = "http://localhost:9998/tika";
+        HttpPut httpPut = new HttpPut(url);
+        httpPut.setHeader("Accept","text/plain");
+        httpPut.setEntity(new FileEntity(new File("D:\\上理视频\\操作系统课后题答案.docx")));
+        CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
+        CloseableHttpResponse execute = closeableHttpClient.execute(httpPut);
+        InputStream inputStream = execute.getEntity().getContent();
+        byte[] b = new byte[100];
+        StringBuilder stringBuilder = new StringBuilder();
+        while(inputStream.read(b) != -1){
+            String readString = new String(b);
+            stringBuilder.append(readString);
+        }
+        return stringBuilder.toString();
+
+    }
 }

@@ -1,174 +1,271 @@
 package com.example.serious.demo.controller;
 
-import com.example.serious.demo.domain.UserEs;
-import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
+import com.example.serious.demo.entity.UserEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.pipeline.BucketMetricsPipelineAggregationBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.IndexOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.*;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/elasticsearch")
-
+@Slf4j
 public class ElasticController {
 
     @Autowired
-    private RestHighLevelClient restHighLevelClient;
+    ElasticsearchRestTemplate elasticsearchRestTemplate;
+//
+//    @RequestMapping("/add")
+//    public String add() throws IOException {
+//        /**
+//         * 向ES中的索引christy下的type类型中添加一天文档
+//         */
+//        IndexRequest indexRequest = new IndexRequest("christy", "user", "13");
+//        indexRequest.source("{\"name\":\"天蓬元帅猪八戒\",\"age\":985,\"bir\":\"1685-01-01\",\"introduce\":\"天蓬元帅猪八戒因调戏嫦娥被贬下凡\",\"address\":\"高老庄\"}", XContentType.JSON);
+//        IndexResponse indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+//
+//
+//
+//        return indexResponse.status().toString();
+//    }
+//
+//    @RequestMapping("/updateDoc")
+//    public void updateDoc() throws IOException {
+//        UpdateRequest updateRequest = new UpdateRequest("christy","user","13");
+//        updateRequest.doc("{\"name\":\"调皮捣蛋的hardy\"}",XContentType.JSON);
+//        UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
+//        System.out.println(updateResponse.status());
+//    }
+//
+//    @RequestMapping("/deleteDoc")
+//    public void deleteDoc() throws IOException {
+//        // 我们把特朗普删除了
+//        DeleteRequest deleteRequest = new DeleteRequest("christy","user","rYBNG3kBRz-Sn-2f3ViU");
+//        DeleteResponse deleteResponse = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+//        System.out.println(deleteResponse.status());
+//    }
+//
+//    @RequestMapping("/bulkUpdate")
+//    public void bulkUpdate() throws IOException {
+//        BulkRequest bulkRequest = new BulkRequest();
+//        // 添加
+//        IndexRequest indexRequest = new IndexRequest("christy","user","13");
+//        indexRequest.source("{\"name\":\"天蓬元帅猪八戒\",\"age\":985,\"bir\":\"1685-01-01\",\"introduce\":\"天蓬元帅猪八戒因调戏嫦娥被贬下凡\",\"address\":\"高老庄\"}", XContentType.JSON);
+//        bulkRequest.add(indexRequest);
+//
+//        // 删除
+//        DeleteRequest deleteRequest01 = new DeleteRequest("christy","user","pYAtG3kBRz-Sn-2fMFjj");
+//        DeleteRequest deleteRequest02 = new DeleteRequest("christy","user","uhTyGHkBExaVQsl4F9Lj");
+//        DeleteRequest deleteRequest03 = new DeleteRequest("christy","user","C8zCGHkB5KgTrUTeLyE_");
+//        bulkRequest.add(deleteRequest01);
+//        bulkRequest.add(deleteRequest02);
+//        bulkRequest.add(deleteRequest03);
+//
+//        // 修改
+//        UpdateRequest updateRequest = new UpdateRequest("christy","user","10");
+//        updateRequest.doc("{\"name\":\"炼石补天的女娲\"}", XContentType.JSON);
+//        bulkRequest.add(updateRequest);
+//
+//        BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+//        BulkItemResponse[] items = bulkResponse.getItems();
+//        for (BulkItemResponse item : items) {
+//            System.out.println(item.status());
+//        }
+//    }
 
-    @RequestMapping("/add")
-    public String add() throws IOException {
-        /**
-         * 向ES中的索引christy下的type类型中添加一天文档
-         */
-        IndexRequest indexRequest = new IndexRequest("christy","user","13");
-        indexRequest.source("{\"name\":\"天蓬元帅猪八戒\",\"age\":985,\"bir\":\"1685-01-01\",\"introduce\":\"天蓬元帅猪八戒因调戏嫦娥被贬下凡\",\"address\":\"高老庄\"}", XContentType.JSON);
-        IndexResponse indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+    @GetMapping("/save")
+    public String save() {
+        UserEntity esEntity = new UserEntity(null, "韩寒", "男", 60, "34");
 
+//        不要拿到自增的返回值
+//        UserEsEntity save = elasticsearchRestTemplate.save(esEntity);
+//        log.info(save.toString());
 
+//        拿到自增的返回值
+        IndexQuery indexQuery = new IndexQueryBuilder()
+//                .withId(esEntity.getId())
+                .withObject(esEntity)
+                .build();
+        String id = elasticsearchRestTemplate.index(indexQuery, IndexCoordinates.of("user"));
+        log.info("添加的id：{} ", id);
 
-        return indexResponse.status().toString();
+//        批量添加
+//        List<UserEsEntity> list = new ArrayList<>();
+//        list.add(esEntity);
+//        list.add(esEntity);
+//        elasticsearchRestTemplate.save(list);
+        return "success";
     }
 
-    @RequestMapping("/updateDoc")
-    public void updateDoc() throws IOException {
-        UpdateRequest updateRequest = new UpdateRequest("christy","user","13");
-        updateRequest.doc("{\"name\":\"调皮捣蛋的hardy\"}",XContentType.JSON);
-        UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
-        System.out.println(updateResponse.status());
+
+    @GetMapping("/indexExists")
+    public String indexExists() {
+        IndexOperations indexOps = elasticsearchRestTemplate.indexOps(UserEntity.class);
+        boolean r1 = indexOps.exists();
+//		创建索引
+//      elasticsearchRestTemplate.createIndex()
+        log.info("r1: {} ", r1);
+        return "success";
     }
 
-    @RequestMapping("/deleteDoc")
-    public void deleteDoc() throws IOException {
-        // 我们把特朗普删除了
-        DeleteRequest deleteRequest = new DeleteRequest("christy","user","rYBNG3kBRz-Sn-2f3ViU");
-        DeleteResponse deleteResponse = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
-        System.out.println(deleteResponse.status());
-    }
+    @GetMapping("/search")
+    public String search() {
+//        查询全部数据
+//        QueryBuilder queryBuilder = QueryBuilders.matchAllQuery();
 
-    @RequestMapping("/bulkUpdate")
-    public void bulkUpdate() throws IOException {
-        BulkRequest bulkRequest = new BulkRequest();
-        // 添加
-        IndexRequest indexRequest = new IndexRequest("christy","user","13");
-        indexRequest.source("{\"name\":\"天蓬元帅猪八戒\",\"age\":985,\"bir\":\"1685-01-01\",\"introduce\":\"天蓬元帅猪八戒因调戏嫦娥被贬下凡\",\"address\":\"高老庄\"}", XContentType.JSON);
-        bulkRequest.add(indexRequest);
+//        精确查询 =
+//        QueryBuilder queryBuilder = QueryBuilders.termQuery("name", "lisi");
 
-        // 删除
-        DeleteRequest deleteRequest01 = new DeleteRequest("christy","user","pYAtG3kBRz-Sn-2fMFjj");
-        DeleteRequest deleteRequest02 = new DeleteRequest("christy","user","uhTyGHkBExaVQsl4F9Lj");
-        DeleteRequest deleteRequest03 = new DeleteRequest("christy","user","C8zCGHkB5KgTrUTeLyE_");
-        bulkRequest.add(deleteRequest01);
-        bulkRequest.add(deleteRequest02);
-        bulkRequest.add(deleteRequest03);
+//        精确查询 多个 in
+//        QueryBuilder queryBuilder = QueryBuilders.termsQuery("name", "张三", "lisi");
 
-        // 修改
-        UpdateRequest updateRequest = new UpdateRequest("christy","user","10");
-        updateRequest.doc("{\"name\":\"炼石补天的女娲\"}",XContentType.JSON);
-        bulkRequest.add(updateRequest);
+//        match匹配，会把查询条件进行分词，然后进行查询，多个词条之间是 or 的关系,可以指定分词
+//        QueryBuilder queryBuilder = QueryBuilders.matchQuery("name", "张三");
+//        QueryBuilder queryBuilder = QueryBuilders.matchQuery("name", "张三").analyzer("ik_max_word");
 
-        BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
-        BulkItemResponse[] items = bulkResponse.getItems();
-        for (BulkItemResponse item : items) {
-            System.out.println(item.status());
+//        match匹配 查询多个字段
+//        QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery("男", "name", "sex");
+
+//        fuzzy 模糊查询，返回包含与搜索字词相似的字词的文档。
+//        QueryBuilder  queryBuilder = QueryBuilders.fuzzyQuery("name","lisx");
+
+//        prefix 前缀检索
+//        QueryBuilder  queryBuilder = QueryBuilders.prefixQuery("name","张");
+
+//        wildcard 通配符检索
+//        QueryBuilder  queryBuilder = QueryBuilders.wildcardQuery("name","张*");
+
+//        regexp 正则查询
+        //QueryBuilder queryBuilder = QueryBuilders.regexpQuery("name", "(李四)|(lisi)");
+
+//        boost 评分权重,令满足某个条件的文档的得分更高，从而使得其排名更靠前。
+        //queryBuilder.boost(2);
+//        多条件构建
+//        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+//        并且 and
+//        queryBuilder.must(QueryBuilders.termQuery("name", "张三"));
+//        queryBuilder.must(QueryBuilders.termQuery("sex", "女"));
+
+//        或者 or
+//        queryBuilder.should(QueryBuilders.termQuery("name", "张三"));
+//        queryBuilder.should(QueryBuilders.termQuery("name", "lisi"));
+
+//        不等于,去除
+//        queryBuilder.mustNot(QueryBuilders.termQuery("name", "lisi"));
+
+//        过滤数据
+//        queryBuilder.filter(QueryBuilders.matchQuery("name", "张三"));
+
+//        范围查询
+        /*
+            gt 大于 >
+            gte 大于等于 >=
+            lt 小于 <
+            lte 小于等于 <=
+        */
+//        queryBuilder.filter(new RangeQueryBuilder("age").gt(10).lte(50));
+
+//        构建分页，page 从0开始
+//        Pageable pageable = PageRequest.of(0, 3);
+//
+//        Query query = new NativeSearchQueryBuilder()
+//                .withQuery(queryBuilder)
+//                .withPageable(pageable)
+//                //排序
+//                .withSort(SortBuilders.fieldSort("_score").order(SortOrder.DESC))
+//                //投影
+//                .withFields("name")
+//                .build();
+//        SearchHits<UserEntity> search = elasticsearchRestTemplate.search(query, UserEntity.class);
+//        log.info("total: {}", search.getTotalHits());
+//        Stream<SearchHit<UserEntity>> searchHitStream = search.get();
+//        List<UserEntity> list = searchHitStream.map(SearchHit::getContent).collect(Collectors.toList());
+//        log.info("结果数量：{}", list.size());
+//        list.forEach(entity -> {
+//            log.info(entity.toString());
+//        });
+        //高亮查询
+        //构建分页，page 从0开始
+        Pageable pageable = PageRequest.of(0, 3);
+
+        Query query = new NativeSearchQueryBuilder()
+                //.withQuery(queryBuilder)
+                .withPageable(pageable)
+                //排序
+                .withSort(SortBuilders.fieldSort("_score").order(SortOrder.DESC))
+                //投影
+                .withFields("age")
+                .withHighlightBuilder(new HighlightBuilder().highlightQuery(QueryBuilders.fuzzyQuery("id", "As")))
+                .addAggregation(AggregationBuilders.terms("group_by_age").field("age"))
+                .build();
+        SearchHits<UserEntity> search = elasticsearchRestTemplate.search(query, UserEntity.class);
+        //得到聚合
+        Aggregations aggregations = search.getAggregations();
+        //得到上面设置的分组
+        Terms brandName = aggregations.get("group_by_age");
+        //创建一个集合用来存放手机品牌
+        ArrayList<String> collect = new ArrayList<>();
+        //得到这个聚合的List对象
+        List<? extends Terms.Bucket> buckets = brandName.getBuckets();
+        //遍历这个List对象
+        for (Terms.Bucket bucket : buckets) {
+            //得到分组后的每一个值
+            String keyAsString = bucket.getKeyAsString();
+            long docCount = bucket.getDocCount();
+            //存入到集合中
+            collect.add(keyAsString);
+            log.info("key: {}  count: {}", keyAsString, docCount);
         }
+        log.info("total: {}", search.getTotalHits());
+        Stream<SearchHit<UserEntity>> searchHitStream = search.get();
+        List<UserEntity> list = searchHitStream.map(SearchHit::getContent).collect(Collectors.toList());
+        log.info("结果数量：{}", list.size());
+        list.forEach(entity -> {
+            log.info(entity.toString());
+        });
+        return "success";
     }
 
-    @RequestMapping("/testSearch")
-    public void testSearch() throws IOException {
-        //创建搜索对象
-        SearchRequest searchRequest = new SearchRequest("christy");
-        //搜索构建对象
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-        searchSourceBuilder.query(QueryBuilders.matchAllQuery())//执行查询条件
-                .from(0)//起始条数
-                .size(10)//每页展示记录
-                .postFilter(QueryBuilders.matchAllQuery()) //过滤条件
-                .sort("age", SortOrder.DESC).highlighter(new HighlightBuilder().field("age").requireFieldMatch(false).preTags("<span style='color:red;'>").postTags("</span>"));//排序
+    @GetMapping("/delete")
+    public String delete() {
+//        根据id删除
+//        String r = elasticsearchRestTemplate.delete("XNMVD34BVYNyxUnr8cdE", IndexCoordinates.of("user"));
+//        log.info("r : {} ", r);
 
-        //创建搜索请求
-        searchRequest.types("user").source(searchSourceBuilder);
+//        根据条件删除
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+//        并且 and
+        //queryBuilder.must(QueryBuilders.termQuery("name", "zhangsan"));
+        queryBuilder.must(QueryBuilders.termQuery("sex", "女"));
+        Query query = new NativeSearchQuery(queryBuilder);
+        elasticsearchRestTemplate.delete(query, UserEntity.class, IndexCoordinates.of("user"));
 
-        SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-
-        System.out.println("符合条件的文档总数: "+searchResponse.getHits().getTotalHits());
-        System.out.println("符合条件的文档最大得分: "+searchResponse.getHits().getMaxScore());
-        SearchHit[] hits = searchResponse.getHits().getHits();
-        for (SearchHit hit : hits) {
-            System.out.println(hit.getSourceAsMap());
-        }
-    }
-
-    @RequestMapping("/testHighLightQuery")
-    public String testHighLightQuery(String name) throws IOException, ParseException {
-        // 创建搜索请求
-        SearchRequest searchRequest = new SearchRequest("christy");
-        // 创建搜索对象
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.commonTermsQuery("name", name))    // 设置查询条件
-                .from(0)    // 起始条数(当前页-1)*size的值
-                .size(10)   // 每页展示条数
-                .sort("age", SortOrder.DESC)    // 排序
-                .highlighter(new HighlightBuilder().field("name").requireFieldMatch(false).preTags("<span style='color:red;'>").postTags("</span>"));  // 设置高亮
-        searchRequest.types("user").source(searchSourceBuilder);
-
-        SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-
-        SearchHit[] hits = searchResponse.getHits().getHits();
-        List<UserEs> userList = new ArrayList<>();
-        for (SearchHit hit : hits) {
-            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            hit.getHighlightFields();
-            UserEs user = new UserEs();
-            user.setId(hit.getId());
-            user.setAge(Integer.parseInt(sourceAsMap.get("age").toString()));
-            user.setBir(new SimpleDateFormat("yyyy-MM-dd").parse(sourceAsMap.get("bir").toString()));
-            user.setIntroduce(sourceAsMap.get("introduce").toString());
-            user.setName(sourceAsMap.get("name").toString());
-            user.setAddress(sourceAsMap.get("address").toString());
-
-            Map<String, HighlightField> highlightFields = hit.getHighlightFields();
-            if(highlightFields.containsKey("name")){
-                user.setName(highlightFields.get("name").fragments()[0].toString());
-            }
-
-            if(highlightFields.containsKey("introduce")){
-                user.setIntroduce(highlightFields.get("introduce").fragments()[0].toString());
-            }
-
-            if(highlightFields.containsKey("address")){
-                user.setAddress(highlightFields.get("address").fragments()[0].toString());
-            }
-
-            userList.add(user);
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        userList.forEach(user -> stringBuilder.append(user.toString()));
-        return stringBuilder.toString();
+        return "success";
     }
 }

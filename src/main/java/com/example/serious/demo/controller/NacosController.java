@@ -1,18 +1,23 @@
 package com.example.serious.demo.controller;
 
-import com.alibaba.nacos.api.config.annotation.NacosValue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/nacos")
+@RefreshScope
 public class NacosController {
 
-    @NacosValue(value = "${useLocalCache:false}", autoRefreshed = true)
-    String nacosConfig;
+    @Value("${config.info}")
+    private String info;     //该属性值是从nacos配置中心拉取到的配置
 
-    @RequestMapping("get")
-    public String getConfig() {
-        return nacosConfig;
+    @GetMapping("/testConfig")
+    public String testConfig() {
+        return info;
     }
 }

@@ -2,6 +2,7 @@ package com.example.serious.demo.controller;
 
 import com.example.serious.demo.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -23,10 +24,13 @@ import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.*;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,8 +103,8 @@ public class ElasticController {
 //    }
 
     @GetMapping("/save")
-    public String save() {
-        UserEntity esEntity = new UserEntity(null, "韩寒", "男", 60, "34");
+    public String save(String name, String sex, Integer age, String grade) {
+        UserEntity esEntity = new UserEntity(null, name, sex, age, grade);
 
 //        不要拿到自增的返回值
 //        UserEsEntity save = elasticsearchRestTemplate.save(esEntity);
@@ -134,7 +138,7 @@ public class ElasticController {
     }
 
     @GetMapping("/search")
-    public String search() {
+    public String search() throws ClassNotFoundException {
 //        查询全部数据
 //        QueryBuilder queryBuilder = QueryBuilders.matchAllQuery();
 
@@ -142,7 +146,7 @@ public class ElasticController {
 //        QueryBuilder queryBuilder = QueryBuilders.termQuery("name", "lisi");
 
 //        精确查询 多个 in
-//        QueryBuilder queryBuilder = QueryBuilders.termsQuery("name", "张三", "lisi");
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.fuzzyQuery("name", "小女友"));
 
 //        match匹配，会把查询条件进行分词，然后进行查询，多个词条之间是 or 的关系,可以指定分词
 //        QueryBuilder queryBuilder = QueryBuilders.matchQuery("name", "张三");
@@ -211,18 +215,23 @@ public class ElasticController {
 //        });
         //高亮查询
         //构建分页，page 从0开始
-        Pageable pageable = PageRequest.of(0, 3);
+        Pageable pageable = PageRequest.of(0, 100);
 
         Query query = new NativeSearchQueryBuilder()
-                //.withQuery(queryBuilder)
+                .withQuery(queryBuilder)
                 .withPageable(pageable)
                 //排序
                 .withSort(SortBuilders.fieldSort("_score").order(SortOrder.DESC))
                 //投影
-                .withFields("age")
-                .withHighlightBuilder(new HighlightBuilder().highlightQuery(QueryBuilders.fuzzyQuery("id", "As")))
+                .withFields("age", "name", "grade", "sex")
+                .withHighlightBuilder(new HighlightBuilder()
+                        .postTags("</font>")
+                        .preTags("<font color=\"red\">")
+                        .field("name").requireFieldMatch(false).fragmentSize(20)
+                )
                 .addAggregation(AggregationBuilders.terms("group_by_age").field("age"))
                 .build();
+        printDSL(query);
         SearchHits<UserEntity> search = elasticsearchRestTemplate.search(query, UserEntity.class);
         //得到聚合
         Aggregations aggregations = search.getAggregations();
@@ -267,5 +276,16 @@ public class ElasticController {
         elasticsearchRestTemplate.delete(query, UserEntity.class, IndexCoordinates.of("user"));
 
         return "success";
+    }
+
+    private void printDSL(Query query) throws ClassNotFoundException {
+        Method searchRequest = ReflectionUtils.findMethod(Class.forName("org.springframework.data.elasticsearch.core.RequestFactory"), "searchRequest", Query.class, Class.class, IndexCoordinates.class);
+        searchRequest.setAccessible(true);
+        Object o = ReflectionUtils.invokeMethod(searchRequest, elasticsearchRestTemplate.getRequestFactory(), query, UserEntity.class, elasticsearchRestTemplate.getIndexCoordinatesFor(UserEntity.class));
+
+        Field source = ReflectionUtils.findField(Class.forName("org.elasticsearch.action.search.SearchRequest"), "source");
+        source.setAccessible(true);
+        Object s = ReflectionUtils.getField(source, o);
+        log.info("dsl:{}", s);
     }
 }

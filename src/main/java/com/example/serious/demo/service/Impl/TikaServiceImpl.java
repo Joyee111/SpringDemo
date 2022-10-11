@@ -1,6 +1,7 @@
 package com.example.serious.demo.service.Impl;
 
 import com.alibaba.fastjson.JSON;
+import com.example.serious.demo.service.ElasticsearchService;
 import com.example.serious.demo.service.TikaService;
 import com.example.serious.demo.util.WebSocket;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +10,14 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -21,6 +25,9 @@ import java.util.concurrent.Future;
 @Service
 @Slf4j
 public class TikaServiceImpl implements TikaService {
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     /**
      * 使用ProcessBuilder 执行curl命令
@@ -55,14 +62,14 @@ public class TikaServiceImpl implements TikaService {
      */
     @Async
     @Override
-    public Future<String> tikaByHttp() throws IOException, InterruptedException {
+    public Future<String> tikaByHttp(MultipartFile file, String fileName) throws IOException, InterruptedException {
         Map<String, String> result = new HashMap<>();
         result.put("usercode", "joyee");
         result.put("status", "DOING");
         WebSocket.sendMessageTo(JSON.toJSONString(result));
         HttpPut httpPut = new HttpPut(TIKA_URL);
         httpPut.setHeader(cmd_Curl_Header.split(":")[0], cmd_Curl_Header.split(":")[1]);
-        httpPut.setEntity(new FileEntity(new File(ABSOLUATE_FILE_PATH)));
+        httpPut.setEntity(new FileEntity(convert(file, fileName)));
         CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
         CloseableHttpResponse execute = closeableHttpClient.execute(httpPut);
         InputStream inputStream = execute.getEntity().getContent();
@@ -75,8 +82,46 @@ public class TikaServiceImpl implements TikaService {
         Thread.sleep(3000);
         result.put("status", "DONE");
         result.put("analyseContent", stringBuilder.toString());
+        com.example.serious.demo.entity.FileEntity fileEntity = new com.example.serious.demo.entity.FileEntity();
+        fileEntity.setFileName(fileName)
+                .setContent(stringBuilder.toString())
+                .setCreaTime(new Date());
+
+        elasticsearchService.save(fileEntity);
         //TODO 入库操作
         //TODO 发通知
         return new AsyncResult<>(WebSocket.sendMessageTo(JSON.toJSONString(result)));
     }
+
+    private File convert(MultipartFile file, String fileName) {
+        String fileOriginalFilename = file.getOriginalFilename();
+        File newFile = new File(fileName);
+        OutputStream out = null;
+        try {
+            //获取文件流，以文件流的方式输出到新文件
+//    InputStream in = multipartFile.getInputStream();
+            out = new FileOutputStream(newFile);
+            byte[] ss = new byte[1024];
+            InputStream inputStream = file.getInputStream();
+            while (inputStream.read() != -1) {
+                inputStream.read(ss);
+                for (int i = 0; i < ss.length; i++) {
+                    out.write(ss[i]);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return newFile;
+    }
+
 }

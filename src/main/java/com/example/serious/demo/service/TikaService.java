@@ -5,6 +5,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.concurrent.Future;
@@ -12,7 +13,7 @@ import java.util.concurrent.Future;
 public interface TikaService {
 
     static final String ABSOLUATE_FILE_PATH = "D:\\日语预习包\\学习资料\\我的用法.docx";
-    static final String TIKA_URL = "http://localhost:9998/tika";
+    static final String TIKA_URL = "http://114.115.239.109:9998/tika";
     static final String cmd_Curl = "curl";
     static final String cmd_Curl_Type = "-T";
     static final String cmd_Curl_Header = "Accept: text/plain";
@@ -36,5 +37,5 @@ public interface TikaService {
      * @return 解析字符
      * @throws IOException 文件IO 异常
      */
-    public Future<String> tikaByHttp() throws IOException, InterruptedException;
+    public Future<String> tikaByHttp(MultipartFile file, String fileName) throws IOException, InterruptedException;
 }

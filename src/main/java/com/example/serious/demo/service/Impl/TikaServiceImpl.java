@@ -14,7 +14,9 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -28,6 +30,7 @@ public class TikaServiceImpl implements TikaService {
      * @param cmdParts 命令行
      * @return 解析字符
      */
+    @Override
     public String tikaByCurl(String[] cmdParts) {
         ProcessBuilder process = new ProcessBuilder(cmdParts);
         Process p;
@@ -55,14 +58,14 @@ public class TikaServiceImpl implements TikaService {
      */
     @Async
     @Override
-    public Future<String> tikaByHttp() throws IOException, InterruptedException {
+    public Future<String> tikaByHttp(File file) throws IOException, InterruptedException {
         Map<String, String> result = new HashMap<>();
         result.put("usercode", "joyee");
         result.put("status", "DOING");
         WebSocket.sendMessageTo(JSON.toJSONString(result));
         HttpPut httpPut = new HttpPut(TIKA_URL);
         httpPut.setHeader(cmd_Curl_Header.split(":")[0], cmd_Curl_Header.split(":")[1]);
-        httpPut.setEntity(new FileEntity(new File(ABSOLUATE_FILE_PATH)));
+        httpPut.setEntity(new FileEntity(file));
         CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
         CloseableHttpResponse execute = closeableHttpClient.execute(httpPut);
         InputStream inputStream = execute.getEntity().getContent();
@@ -78,5 +81,24 @@ public class TikaServiceImpl implements TikaService {
         //TODO 入库操作
         //TODO 发通知
         return new AsyncResult<>(WebSocket.sendMessageTo(JSON.toJSONString(result)));
+    }
+
+    @Override
+    public List<String> tikaSynFileForKumo(File file) throws IOException {
+        HttpPut httpPut = new HttpPut(TIKA_URL);
+        httpPut.setHeader(cmd_Curl_Header.split(":")[0], cmd_Curl_Header.split(":")[1]);
+        httpPut.setEntity(new FileEntity(file));
+        CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
+        CloseableHttpResponse execute = closeableHttpClient.execute(httpPut);
+        InputStream inputStream = execute.getEntity().getContent();
+        byte[] b = new byte[1];
+        List<String> list = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        while (inputStream.read(b) != -1) {
+            String readString = new String(b,"UTF-8");
+            stringBuilder.append(readString);
+            list.add(readString);
+        }
+        return list;
     }
 }

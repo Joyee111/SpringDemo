@@ -7,11 +7,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import java.io.*;
+import java.util.List;
 import java.util.concurrent.Future;
 
 public interface TikaService {
 
-    static final String ABSOLUATE_FILE_PATH = "D:\\日语预习包\\学习资料\\我的用法.docx";
+    static final String ABSOLUATE_FILE_PATH = "/Users/joyee/Desktop/BAK_0_TEXT";
     static final String TIKA_URL = "http://localhost:9998/tika";
     static final String cmd_Curl = "curl";
     static final String cmd_Curl_Type = "-T";
@@ -36,5 +37,7 @@ public interface TikaService {
      * @return 解析字符
      * @throws IOException 文件IO 异常
      */
-    public Future<String> tikaByHttp() throws IOException, InterruptedException;
+    public Future<String> tikaByHttp(File file) throws IOException, InterruptedException;
+
+    List<String> tikaSynFileForKumo(File multipartFileToFile) throws IOException;
 }

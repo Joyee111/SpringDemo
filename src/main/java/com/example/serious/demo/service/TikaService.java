@@ -28,7 +28,7 @@ public interface TikaService {
      * @param cmdParts 命令行
      * @return 解析字符
      */
-    public String tikaByCurl(String[] cmdParts);
+//    public String tikaByCurl(String[] cmdParts);
 
     /**
      * 使用http请求tika

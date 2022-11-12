@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RefreshScope
 public class NacosController {
 
-    @Value("${config.info}")
     private String info;     //该属性值是从nacos配置中心拉取到的配置
 
     @GetMapping("/testConfig")
     public String testConfig() {
-        return info;
+        return "info";
     }
 }

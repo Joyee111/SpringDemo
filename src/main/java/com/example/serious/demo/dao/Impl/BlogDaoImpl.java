@@ -4,8 +4,6 @@ import com.example.serious.demo.dao.BlogDao;
 import com.example.serious.demo.domain.Blog;
 import com.example.serious.demo.domain.TestEntity;
 import com.example.serious.demo.mapper.BlogMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +14,6 @@ import java.util.List;
 public class BlogDaoImpl implements BlogDao {
     @Autowired
     BlogMapper blogMapper;
-    private static final Logger LOGGER = LoggerFactory.getLogger(BlogDaoImpl.class);
     @Override
     public Blog getAllBlogInfo() {
         return null;

@@ -3,19 +3,11 @@ package com.example.serious.demo.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.example.serious.demo.Aspect.demoAspect;
 import com.example.serious.demo.dao.BlogDao;
 import com.example.serious.demo.domain.Blog;
-import com.example.serious.demo.domain.TestEntity;
-import com.example.serious.demo.mapper.BlogMapper;
 import com.example.serious.demo.util.AspectUtils;
 import com.example.serious.demo.util.JedisUtils;
-import com.example.serious.demo.util.RandomUtil;
-import com.sun.media.jfxmedia.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -23,11 +15,9 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPoolAbstract;
 import redis.clients.jedis.params.SetParams;
 
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,7 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * blog页面
@@ -87,7 +76,6 @@ public class blogPage {
     @ResponseBody
     @AspectUtils
     public String uploadBlog(HttpServletRequest request, @RequestParam(value = "file") MultipartFile multipartFile, @RequestParam(value = "title") String title, @RequestParam(value = "content") String content, @RequestParam(value = "usercode") String usercode) {
-        Jedis jedis = JedisUtils.getInstance("localhost");
         try {
 
             //获取根节点
@@ -103,7 +91,6 @@ public class blogPage {
             blog.setImgUrl("/assets/img/" + multipartFile.getOriginalFilename());
             int i = blogDao.setBlog(blog);
             if (i > 0) {
-                long m = jedis.del("blogs_" + usercode);
             }
         } catch (IOException e) {
             e.printStackTrace();

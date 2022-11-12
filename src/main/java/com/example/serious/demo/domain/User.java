@@ -4,7 +4,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
-import java.util.HashSet;
 
 public class User implements Serializable {
     private int id;
@@ -57,8 +56,6 @@ public class User implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        HashSet<User> set = new HashSet<>();
-
         if (!(o instanceof User)) return false;
 
         User user = (User) o;

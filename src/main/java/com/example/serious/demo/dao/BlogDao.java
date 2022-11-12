@@ -3,8 +3,6 @@ package com.example.serious.demo.dao;
 
 import com.example.serious.demo.domain.Blog;
 import com.example.serious.demo.domain.TestEntity;
-import org.junit.Test;
-
 import java.util.List;
 
 public interface BlogDao {

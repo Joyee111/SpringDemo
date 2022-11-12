@@ -1,10 +1,7 @@
 package com.example.serious.demo.controller;
 
-import org.apache.catalina.loader.WebappClassLoader;
-import org.apache.catalina.startup.ClassLoaderFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
@@ -14,7 +11,7 @@ import java.lang.reflect.Method;
 @Controller
 public class DynamicClassLoadServ extends ClassLoader{
 @GetMapping(value = "/setClass")
-    protected String findClass(@RequestParam(value = "uri") String packageUri , @RequestParam(value = "name") String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    protected String findClass(@RequestParam(value = "uri") String packageUri , @RequestParam(value = "name") String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException {
         byte[] classData = getClassData("D:\\workspace\\SpringDemo\\target\\classes",name);
         if (classData == null) {
             throw new ClassNotFoundException();
@@ -43,20 +40,24 @@ public class DynamicClassLoadServ extends ClassLoader{
         }
     }
 
-    private byte[] getClassData(String packageUri , String className) {
+    private byte[] getClassData(String packageUri , String className) throws IOException {
         String path = classNameToPath(packageUri,className);
+        ByteArrayOutputStream baos = null;
         try {
-            InputStream ins = new FileInputStream(path);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int bufferSize = 4096;
-            byte[] buffer = new byte[bufferSize];
-            int bytesNumRead = 0;
-            while ((bytesNumRead = ins.read(buffer)) != -1) {
-                baos.write(buffer, 0, bytesNumRead);
+            try (InputStream ins = new FileInputStream(path)) {
+                baos = new ByteArrayOutputStream();
+                int bufferSize = 4096;
+                byte[] buffer = new byte[bufferSize];
+                int bytesNumRead = 0;
+                while ((bytesNumRead = ins.read(buffer)) != -1) {
+                    baos.write(buffer, 0, bytesNumRead);
+                }
             }
             return baos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally{
+            baos.close();
         }
         return null;
     }

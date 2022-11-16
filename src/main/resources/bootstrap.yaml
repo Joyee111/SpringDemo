@@ -1,6 +1,7 @@
 server:
   port: 8080
-
+config:
+  info: 4
 spring:
   application:
     name: cloudalibaba-config-service

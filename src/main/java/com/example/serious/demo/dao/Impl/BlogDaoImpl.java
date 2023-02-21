@@ -24,6 +24,7 @@ public class BlogDaoImpl implements BlogDao {
 
     @Override
     public Blog getBlog() {
+        System.out.println("继续执行");
         return null;
     }
 

@@ -1,2 +1,4 @@
-package com.example.serious.demo.util;public class asyncUtil {
+package com.example.serious.demo.util;
+
+public class asyncUtil {
 }

@@ -1,12 +1,9 @@
 package com.example.serious.demo.Aspect;
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
@@ -15,16 +12,14 @@ import org.springframework.web.context.request.RequestContextHolder;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 @Slf4j
 @Component
 @Aspect
 public class demoAspect {
     @Pointcut("@annotation( com.example.serious.demo.util.AspectUtils)")
     public void asp(){
-
+        System.out.println("asp方法");
     }
     @Before("asp()")
     public void doBefore(JoinPoint joinPoint) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -70,5 +65,11 @@ public class demoAspect {
             }
         }
 
+    }
+    @Around("asp()")
+    public  void doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        //before
+        proceedingJoinPoint.proceed();
+        //after
     }
 }

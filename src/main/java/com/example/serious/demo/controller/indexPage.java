@@ -6,6 +6,7 @@ import com.example.serious.demo.mq.core.RedisMQTemplate;
 import com.example.serious.demo.mq.core.stream.MailProducer;
 import com.example.serious.demo.mq.core.stream.MailSendMessage;
 import com.example.serious.demo.service.DemoService;
+import com.example.serious.demo.util.AspectUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -41,9 +42,10 @@ public class indexPage {
     private RedisMQTemplate redisMQTemplate;
 
     @RequestMapping("/index")
+    @AspectUtils
     public String index(@RequestBody @Valid FileEntity fileEntity) {
 
-        byte[] bytes = new String("send.index").getBytes();
+        byte[] bytes = new String(new MailSendMessage().getStreamKey()).getBytes();
         PendingMessagesSummary testRedis = redisTemplate.getConnectionFactory().getConnection().xPending(bytes, "testRedis");
         if (testRedis.getTotalPendingMessages() > 0) {
             List<ByteRecord> byteRecords = redisTemplate.getConnectionFactory().getConnection().xRange(bytes, testRedis.getIdRange());

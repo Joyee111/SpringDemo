@@ -1,7 +1,6 @@
 package com.example.serious.demo.mq.core;
 
 import com.example.serious.demo.json.JsonUtils;
-import com.example.serious.demo.mq.core.message.AbstractRedisMessage;
 import com.example.serious.demo.mq.core.stream.AbstractStreamMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

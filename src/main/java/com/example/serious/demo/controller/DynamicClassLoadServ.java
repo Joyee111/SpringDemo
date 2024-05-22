@@ -1,10 +1,7 @@
 package com.example.serious.demo.controller;
 
-import org.apache.catalina.loader.WebappClassLoader;
-import org.apache.catalina.startup.ClassLoaderFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
@@ -14,7 +11,7 @@ import java.lang.reflect.Method;
 @Controller
 public class DynamicClassLoadServ extends ClassLoader{
 @GetMapping(value = "/setClass")
-    protected String findClass(@RequestParam(value = "uri") String packageUri , @RequestParam(value = "name") String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    protected String setClass(@RequestParam(value = "uri") String packageUri , @RequestParam(value = "name") String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
         byte[] classData = getClassData("D:\\workspace\\SpringDemo\\target\\classes",name);
         if (classData == null) {
             throw new ClassNotFoundException();

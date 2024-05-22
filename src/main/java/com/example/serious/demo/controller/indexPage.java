@@ -6,15 +6,12 @@ import com.example.serious.demo.mq.core.RedisMQTemplate;
 import com.example.serious.demo.mq.core.stream.MailProducer;
 import com.example.serious.demo.mq.core.stream.MailSendMessage;
 import com.example.serious.demo.service.DemoService;
-import lombok.Setter;
+import com.example.serious.demo.util.AspectUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.stream.ByteRecord;
 import org.springframework.data.redis.connection.stream.PendingMessagesSummary;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,9 +38,10 @@ public class indexPage {
     private RedisMQTemplate redisMQTemplate;
 
     @RequestMapping("/index")
+    @AspectUtils
     public String index(@RequestBody @Valid FileEntity fileEntity) {
 
-        byte[] bytes = new String("send.index").getBytes();
+        byte[] bytes = new String(new MailSendMessage().getStreamKey()).getBytes();
         PendingMessagesSummary testRedis = redisTemplate.getConnectionFactory().getConnection().xPending(bytes, "testRedis");
         if (testRedis.getTotalPendingMessages() > 0) {
             List<ByteRecord> byteRecords = redisTemplate.getConnectionFactory().getConnection().xRange(bytes, testRedis.getIdRange());

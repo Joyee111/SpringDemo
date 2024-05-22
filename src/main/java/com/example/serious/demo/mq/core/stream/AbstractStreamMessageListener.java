@@ -1,7 +1,6 @@
 package com.example.serious.demo.mq.core.stream;
 
 import cn.hutool.core.util.TypeUtil;
-import com.example.serious.demo.entity.FileEntity;
 import com.example.serious.demo.json.JsonUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,15 +8,11 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.connection.stream.*;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 
 import java.lang.reflect.Type;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Redis Stream 监听器抽象类，用于实现集群消费
@@ -57,7 +52,7 @@ public abstract class AbstractStreamMessageListener<T extends AbstractStreamMess
     @SneakyThrows
     protected AbstractStreamMessageListener() {
         this.messageType = getMessageClass();
-        this.streamKey = messageType.newInstance().getStreamKey();
+        this.streamKey = messageType.getDeclaredConstructor().newInstance().getStreamKey();
     }
 
 

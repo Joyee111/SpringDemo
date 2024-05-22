@@ -1,6 +1,5 @@
 package com.example.serious.demo.entity;
 
-import com.example.serious.demo.mq.core.stream.AbstractStreamMessage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -4,6 +4,7 @@ import com.example.serious.demo.json.JsonUtils;
 import com.example.serious.demo.mq.core.stream.AbstractStreamMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.java.Log;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author 芋道源码
  */
 @AllArgsConstructor
+@Log
 public class RedisMQTemplate {
 
     @Getter
@@ -33,6 +35,4 @@ public class RedisMQTemplate {
                 .withStreamKey(message.getStreamKey())); // 设置 stream key
 
     }
-
-
 }

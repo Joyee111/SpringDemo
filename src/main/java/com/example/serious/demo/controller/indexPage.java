@@ -7,7 +7,6 @@ import com.example.serious.demo.mq.core.stream.MailProducer;
 import com.example.serious.demo.mq.core.stream.MailSendMessage;
 import com.example.serious.demo.service.DemoService;
 import com.example.serious.demo.util.AspectUtils;
-import com.example.serious.demo.util.RedisDelayDeleteAspect;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.stream.ByteRecord;
@@ -39,6 +38,7 @@ public class indexPage {
     private RedisMQTemplate redisMQTemplate;
 
     @RequestMapping("/index")
+    @AspectUtils
     public String index(@RequestBody @Valid FileEntity fileEntity) {
 
         byte[] bytes = new String(new MailSendMessage().getStreamKey()).getBytes();
@@ -58,14 +58,6 @@ public class indexPage {
             });
         }
         mailProducer.sendMailSendMessage(fileEntity);
-        mailProducer.testPrivate();
-        return "index";
-    }
-
-    @RequestMapping("/redisDelayDelete")
-    @RedisDelayDeleteAspect
-    public String redisDelayDelete(@RequestBody @Valid FileEntity fileEntity) {
-
         return "index";
     }
 }

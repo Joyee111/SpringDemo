@@ -35,7 +35,6 @@ public class TikaServiceImpl implements TikaService {
      * @param cmdParts 命令行
      * @return 解析字符
      */
-    @Override
     public String tikaByCurl(String[] cmdParts) {
         ProcessBuilder process = new ProcessBuilder(cmdParts);
         Process p;

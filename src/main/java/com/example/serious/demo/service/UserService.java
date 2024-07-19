@@ -5,5 +5,4 @@ import com.example.serious.demo.domain.User;
 public interface UserService {
     public User getById(int id);
     public boolean tx();
-    public User updateUserById(User user);
 }

@@ -1,7 +1,5 @@
 package com.example.serious.demo.Aspect;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.example.serious.demo.entity.FileEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -29,10 +27,9 @@ public class redisAspect {
         //before
         int length = proceedingJoinPoint.getArgs().length;
         Object arg = proceedingJoinPoint.getArgs()[length-1];
-        FileEntity fileEntity = BeanUtil.copyProperties(proceedingJoinPoint.getArgs()[length - 1], FileEntity.class);
-        Boolean delete = redisTemplate.delete(fileEntity.getId());
+        redisTemplate.delete(arg);
         proceedingJoinPoint.proceed();
         //after
-        log.info("是否删除："+delete);
+        redisTemplate.delete(arg);
     }
 }
